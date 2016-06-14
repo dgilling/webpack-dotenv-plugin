@@ -11,7 +11,16 @@ function DotenvPlugin(options) {
 
   dotenv.config(options);
   this.example = dotenv.parse(fs.readFileSync(options.sample));
-  this.env = dotenv.parse(fs.readFileSync(options.path));
+
+  var fileContent = '';
+  try {
+    fileContent = fs.readFileSync(options.path)
+  } catch (err) {
+    if (!options.allowFileNotFound) {
+      throw err;
+    }
+  }
+  this.env = dotenv.parse(fileContent);
 }
 
 DotenvPlugin.prototype.apply = function(compiler) {
